@@ -15,8 +15,14 @@ app.set('views',templatePath);
 
 app.get('/',(req,res)=>{
     res.render('index');
-
-})
+    })
+    app.get('/about',(req,res)=>{
+        res.render('about');
+        })
+    app.get('/register',(req,res)=>{
+        res.render('register');
+        })
+    
 app.get('*',(req,res)=>{
     res.send("Opps Page dose not exists")
 })
