@@ -3,6 +3,9 @@ const path=require('path')
 const app=express();
 const port =process.env.PORT || 3000;
 const hbs=require('hbs');
+// database connection
+require("./db/conn")
+const Student =require('./models/model')
 
 const templatePath=path.join(__dirname,'../template/views')
 const partialsPath=path.join(__dirname,'../template/partials');
