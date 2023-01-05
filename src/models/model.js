@@ -29,7 +29,7 @@ const EmployeeSchema=new mongoose.Schema({
         }
         },
     Phone:{
-        type:String,
+        type:Number,
         // min:11,
         // max:11,
         required:true,
@@ -38,9 +38,11 @@ const EmployeeSchema=new mongoose.Schema({
     password:{
         type:String,
         required:true,
-        unique:true
+    },
+       Confirmpassword:{
+        type:String,
+        required:true,
     }
-    
 })
 
 // create a new collection 

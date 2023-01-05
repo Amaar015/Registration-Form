@@ -11,13 +11,13 @@
     <div class="mains">
     <div class="form_main">
          <h2>Registeration Form</h2>
-         <form action="">
-            <input type="text" class="input" placeholder="First Name">
-            <input type="text" class="input" placeholder="Last Name">
-            <input type="email" class="input" placeholder="Email">
-            <input type="number" class="input" placeholder="Phone Number">
-            <input type="password" class="input" placeholder="Password">
-            <input type="password" class="input" placeholder="Confirm Password">
+         <form  action="/register" method="POST">
+            <input type="text" class="input" name="fname" value="" placeholder="First Name">
+            <input type="text" class="input" name="lname" value="" placeholder="Last Name">
+            <input type="email" class="input" name="email" value="" placeholder="Email">
+            <input type="number" class="input" name="phone" value="" placeholder="Phone Number">
+            <input type="password" class="input" name="password" value="" placeholder="Password">
+            <input type="password" class="input" name="Cpassword" value="" placeholder="Confirm Password">
             <button class="btn-login" >Register</button>  
 
          </form>
