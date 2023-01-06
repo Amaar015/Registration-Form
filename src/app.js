@@ -28,7 +28,7 @@ app.get('/',(req,res)=>{
         res.render('register');
 
         })
-app.post('/register',async(req,res)=>{
+        app.post('/register',async(req,res)=>{
        try{
         const password=req.body.password;
         const cpassword=req.body.Cpassword;
@@ -43,6 +43,7 @@ app.post('/register',async(req,res)=>{
                     Confirmpassword:req.body.Cpassword
                 }) 
                 const registered=await registeremployee.save();
+                alert("Employee data Saved")
                 res.status(201).render("index")
       
             }else{
@@ -54,9 +55,33 @@ app.post('/register',async(req,res)=>{
     
         
         })
-app.get('*',(req,res)=>{
+        
+        app.get('/login',(req,res)=>{
+            res.render('login');
+    
+            })
+        app.get('*',(req,res)=>{
     res.send("Opps Page dose not exists")
 })
+
+// check validation
+ app.post('/login',async(req,res)=>{
+    try{
+        const email=req.body.emails;
+        const password=req.body.passwords;
+        const useremail=await Customer.findOne({email})
+        
+        if(useremail.password===password){
+            res.status(201).render('index');
+        }else{
+            res.send("Email or Password is invalid")
+        }
+    }catch(err){
+        res.status(404).send("Invalid Email Adress")
+    }
+ })
+
+
 app.listen(port,()=>{
        console.log(`listening from the port no ${port} ......`)
 })
