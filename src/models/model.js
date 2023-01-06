@@ -1,6 +1,6 @@
 const mongoose=require("mongoose");
 const validator=require("validator")
-
+const bcrypt= require("bcryptjs");
 
 const EmployeeSchema=new mongoose.Schema({
     first_name:{
@@ -30,10 +30,7 @@ const EmployeeSchema=new mongoose.Schema({
         },
     Phone:{
         type:Number,
-        // min:11,
-        // max:11,
         required:true,
-        // unique:true,
     },
     password:{
         type:String,
@@ -45,6 +42,14 @@ const EmployeeSchema=new mongoose.Schema({
     }
 })
 
+EmployeeSchema.pre("save", async function(next){
+    if(this.isModified("password")){
+        console.log(`before current password is ${this.password}`);
+        this.password=await bcrypt.hash(this.password,10)
+        console.log(`current password is ${this.password}`);
+    }
+    next();
+})
 // create a new collection 
 
 const employees=new mongoose.mongoose.model("employees",EmployeeSchema);

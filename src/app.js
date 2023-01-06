@@ -5,28 +5,32 @@ const port =process.env.PORT || 3000;
 const hbs=require('hbs');
 // database connection
 require("./db/conn")
+// require the database schema
 const Customer=require('./models/model')
+// use to resolve the json formate
 app.use(express.json())
+// use to get the html value from inputs
 app.use(express.urlencoded({extended:false}))
 
+// select the path values
 const templatePath=path.join(__dirname,'../template/views')
 const partialsPath=path.join(__dirname,'../template/partials');
 const static_path=path.join(__dirname,'../public')
 app.use(express.static(static_path))
 //  to set view engine
 app.set('view engine','hbs');
+// to register the partials
 hbs.registerPartials(partialsPath);
 app.set('views',templatePath);
 
-app.get('/',(req,res)=>{
-    res.render('index');
-    })
+    app.get('/',(req,res)=>{
+        res.render('index');
+        })
     app.get('/about',(req,res)=>{
         res.render('about');
         })
     app.get('/register',(req,res)=>{
         res.render('register');
-
         })
         app.post('/register',async(req,res)=>{
        try{
@@ -43,7 +47,7 @@ app.get('/',(req,res)=>{
                     Confirmpassword:req.body.Cpassword
                 }) 
                 const registered=await registeremployee.save();
-                alert("Employee data Saved")
+                // alert("Employee data Saved")
                 res.status(201).render("index")
       
             }else{
@@ -77,7 +81,7 @@ app.get('/',(req,res)=>{
             res.send("Email or Password is invalid")
         }
     }catch(err){
-        res.status(404).send("Invalid Email Adress")
+        res.status(404).send("Email or Password is invalid")
     }
  })
 
