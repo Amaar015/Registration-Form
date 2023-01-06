@@ -3,6 +3,7 @@ const path=require('path')
 const app=express();
 const port =process.env.PORT || 3000;
 const hbs=require('hbs');
+const bcrypt=require('bcryptjs');
 // database connection
 require("./db/conn")
 // require the database schema
@@ -75,7 +76,8 @@ app.set('views',templatePath);
         const password=req.body.passwords;
         const useremail=await Customer.findOne({email})
         
-        if(useremail.password===password){
+        const isMatch=bcrypt.compare(password,useremail.password)
+        if(isMatch){
             res.status(201).render('index');
         }else{
             res.send("Email or Password is invalid")
