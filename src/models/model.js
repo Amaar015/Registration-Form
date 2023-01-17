@@ -1,7 +1,7 @@
 const mongoose=require("mongoose");
 const validator=require("validator")
 const bcrypt= require("bcryptjs");
-
+const jwt=require("jsonwebtoken")
 const EmployeeSchema=new mongoose.Schema({
     first_name:{
         type:String,
@@ -39,8 +39,27 @@ const EmployeeSchema=new mongoose.Schema({
        Confirmpassword:{
         type:String,
         required:true,
-    }
+    },
+    tokens:[{
+        token:[{
+        type:String,
+        required:true,
+    }]
+}]
 })
+
+EmployeeSchema.methods.generateAutoToken =async function(){
+     try{
+        console.log(this._id)
+        const token=jwt.sign({_id:this._id.toString()}, "mynameisamaarhussnainrazaandsoftwarestudentandhowareyou")
+        this.tokens=this.tokens.concat({token:token});
+        await this.save();
+        return token;
+     }catch(err){
+             res.send(`the error is ${err}`)
+             console.log(`the error is ${err}`);
+     }
+}
 
 EmployeeSchema.pre("save", async function(next){
     if(this.isModified("password")){

@@ -47,7 +47,11 @@ app.set('views',templatePath);
                     password:req.body.password,
                     Confirmpassword:req.body.Cpassword
                 }) 
+                const token= await registeremployee.generateAutoToken();
+                console.log(`the token is ${token}`)
                 const registered=await registeremployee.save();
+                console.log(`the token is ${token}`)
+                
                 // alert("Employee data Saved")
                 res.status(201).render("index")
       
@@ -56,6 +60,7 @@ app.set('views',templatePath);
         }
            }catch(err){
           res.status(401).send(err)
+          console.log("the page contain error")
        }  
     
         
@@ -65,10 +70,29 @@ app.set('views',templatePath);
             res.render('login');
     
             })
+            app.get('/show',async(req,res)=>{
+                res.render('show');
+            })
+            
+
+
         app.get('*',(req,res)=>{
     res.send("Opps Page dose not exists")
 })
 
+
+// authentication
+// const jwt =require('jsonwebtoken');
+// const createToken=async()=>{
+//     const token =await jwt.sign({_id:"63b697dd7b7038e13936fc02"},"helloiamamaarhussnainrazaandhowareyou",{
+//         expiresIn:"2 seconds"
+//     })
+     
+//     // console.log(token);
+//     const userVerify=await jwt.verify(token,"helloiamamaarhussnainrazaandhowareyou")
+//     console.log(userVerify);
+// }
+// createToken();
 // check validation
  app.post('/login',async(req,res)=>{
     try{
@@ -76,7 +100,7 @@ app.set('views',templatePath);
         const password=req.body.passwords;
         const useremail=await Customer.findOne({email})
         
-        const isMatch=bcrypt.compare(password,useremail.password)
+        const isMatch=await bcrypt.compare(password,useremail.password)
         if(isMatch){
             res.status(201).render('index');
         }else{

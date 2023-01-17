@@ -207,3 +207,10 @@ form{
 .btn-login:hover{
     border:4px solid white;
 }
+
+/* show .hbs */
+
+table>th{
+    display: flex;
+    gap: 4px;
+}
