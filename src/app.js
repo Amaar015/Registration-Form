@@ -1,18 +1,27 @@
+// to include env file
+require('dotenv').config();
 const express= require('express');
 const path=require('path')
 const app=express();
-const port =process.env.PORT || 3000;
+// to initialize the port variable to env value from the env file
+const port =process.env.PORT ;
+// to include the handle bars
 const hbs=require('hbs');
+// to encrypt the password or secure data 
 const bcrypt=require('bcryptjs');
-// database connection
+const cookieparser=require("cookie-parser")
+// to use auth methode
+const auth=require('./midleware/auth');
+// to include  database connection
 require("./db/conn")
-// require the database schema
+// to include/require the database schema
 const Customer=require('./models/model')
 // use to resolve the json formate
 app.use(express.json())
 // use to get the html value from inputs
 app.use(express.urlencoded({extended:false}))
-
+// using a cookies
+app.use(cookieparser());
 // select the path values
 const templatePath=path.join(__dirname,'../template/views')
 const partialsPath=path.join(__dirname,'../template/partials');
@@ -24,19 +33,29 @@ app.set('view engine','hbs');
 hbs.registerPartials(partialsPath);
 app.set('views',templatePath);
 
+// console.log(process.env.SECRET_KEY);
+
     app.get('/',(req,res)=>{
         res.render('index');
         })
-    app.get('/about',(req,res)=>{
+        
+    app.get('/secret',auth,(req,res)=>{
+        console.log("this is the awesome cookies "+req.cookies.jwt);
+        res.render('secret');
+        })
+    app.get('/about',auth,(req,res)=>{
         res.render('about');
         })
     app.get('/register',(req,res)=>{
         res.render('register');
         })
+
+        // to get the user data and store it into the database
         app.post('/register',async(req,res)=>{
        try{
         const password=req.body.password;
         const cpassword=req.body.Cpassword;
+        // === is used to comparrision of value and as well as datatype of the text
         if(password===cpassword){
                 const registeremployee= new Customer({
                     first_name:req.body.fname,
@@ -47,10 +66,20 @@ app.set('views',templatePath);
                     password:req.body.password,
                     Confirmpassword:req.body.Cpassword
                 }) 
+                // to genrate the token by using the middle ware from models file generatetoken
                 const token= await registeremployee.generateAutoToken();
-                console.log(`the token is ${token}`)
+                // console.log(`the token is ${token}`)
+                 
+                // use jwt cookies to store the token into the cookies
+                res.cookie("jwt",token,{
+                    //  expires to give the time from the date now and to give time in ms token in this time period the token is expires
+                    expires:new Date(Date.now()+ 30000),
+                    httpOnly:true
+                });
+                // console.log(cookie);
+
                 const registered=await registeremployee.save();
-                console.log(`the token is ${token}`)
+                // console.log(`the token is ${registered}`)
                 
                 // alert("Employee data Saved")
                 res.status(201).render("index")
@@ -74,6 +103,20 @@ app.set('views',templatePath);
                 res.render('show');
             })
             
+
+            app.get('/logout',auth, async(req,res)=>{
+                try{
+                    req.user.tokens=req.user.tokens.filter((currElement)=>{
+                        return currElement.token != req.token;
+                    })
+                    res.clearCookie("jwt");
+                    console.log("Logout successfully");
+                    await req.user.save();
+                    res.render("login")
+                }catch(err){
+                    res.status(500).send(err);
+                }
+            })
 
 
         app.get('*',(req,res)=>{
@@ -101,6 +144,13 @@ app.set('views',templatePath);
         const useremail=await Customer.findOne({email})
         
         const isMatch=await bcrypt.compare(password,useremail.password)
+        const token= await useremail.generateAutoToken();
+                console.log(`the token is ${token}`)
+                
+                res.cookie("jwt",token,{
+                    expires:new Date(Date.now()+ 3000000),
+                    httpOnly:true
+                });
         if(isMatch){
             res.status(201).render('index');
         }else{
@@ -110,6 +160,9 @@ app.set('views',templatePath);
         res.status(404).send("Email or Password is invalid")
     }
  })
+
+
+//  logout page
 
 
 app.listen(port,()=>{

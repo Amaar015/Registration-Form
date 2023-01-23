@@ -50,14 +50,14 @@ const EmployeeSchema=new mongoose.Schema({
 
 EmployeeSchema.methods.generateAutoToken =async function(){
      try{
-        console.log(this._id)
-        const token=jwt.sign({_id:this._id.toString()}, "mynameisamaarhussnainrazaandsoftwarestudentandhowareyou")
+        // console.log(this._id)
+        const token=jwt.sign({_id:this._id.toString()}, process.env.SECRET_KEY)
         this.tokens=this.tokens.concat({token:token});
         await this.save();
         return token;
      }catch(err){
              res.send(`the error is ${err}`)
-             console.log(`the error is ${err}`);
+            //  console.log(`the error is ${err}`);
      }
 }
 
